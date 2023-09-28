@@ -62,7 +62,8 @@ fn load_icon(path: &std::path::Path) -> tray_icon::Icon {
     };
     tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("Failed to open icon")
 }
-fn build_tray() {
+
+fn main() {
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/src/resources/appicon_512x512.ico");
     let icon = load_icon(std::path::Path::new(path));
 
@@ -74,7 +75,9 @@ fn build_tray() {
         &MenuItem::new("Exit", true, None),
     ]) {
         Ok(..) => {},
-        Err(..) => {}
+        Err(err) => {
+            println!("failed to create tray menu: {}", err);
+        }
     };
 
     // Since winit doesn't use gtk on Linux, and we need gtk for
@@ -109,6 +112,13 @@ fn build_tray() {
     let menu_channel = MenuEvent::receiver();
     let tray_channel = TrayIconEvent::receiver();
 
+    std::thread::spawn(move || {
+        println!("-- SERVER START --");
+        let listener = TcpListener::bind("127.0.0.1:30000").unwrap();
+        for stream in listener.incoming() { handle_client(stream.unwrap()); }
+        println!("-- SERVER STOPPED --");
+    });
+
     event_loop.run(move |_event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
 
@@ -118,15 +128,5 @@ fn build_tray() {
         if let Ok(event) = menu_channel.try_recv() {
             println!("menu event: {:?}", event);
         }
-    })
-}
-
-fn main() -> std::io::Result<()> {
-    build_tray();
-    println!("-- SERVER START --");
-    let listener = TcpListener::bind("127.0.0.1:30000")?;
-    for stream in listener.incoming() { handle_client(stream?); }
-    println!("-- SERVER STOPPED --");
-
-    Ok(())
+    });
 }
