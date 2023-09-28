@@ -5,7 +5,7 @@ use tray_icon::{
     TrayIconEvent,
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
-use server::{build_tray, callback, capture_screen, tcp_client, init_folders, init_status, LOG_FILE};
+use server::{build_tray, callback, tcp_client, init_folders, init_status, LOG_FILE};
 
 fn main() {
     init_folders();
