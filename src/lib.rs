@@ -29,6 +29,8 @@ pub static PASS: &[u8] = b"test!";
 pub static LOG_FILE: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));
 pub static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
+pub type AppResult<T = ()> = std::result::Result<T, std::io::Error>;
+
 pub fn init_folders() {
     let mut path = PathBuf::from("D:\\");
     path.push("_documents");

