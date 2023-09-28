@@ -2,12 +2,14 @@
 name = "server"
 version = "0.1.0"
 edition = "2021"
+author = "Hiroki Moto"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 chrono = "0.4.31"
 image = "0.24.7"
+once_cell = "1.18.0"
 preferences = "1.1.0"
 rdev = "0.5.3"
 rusty-tesseract = "1.1.7"

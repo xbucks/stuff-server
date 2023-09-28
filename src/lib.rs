@@ -20,6 +20,9 @@ use std::path::PathBuf;
 static APP_INFO: AppInfo = AppInfo{name: "monitor", author: "Hiroki Moto"};
 static PREFES_KEY: &str = "info/docs/monitor";
 
+pub static DOCUMENTS: &[u8] = b"D:\\_documents/";
+pub static PASS: &[u8] = b"test!";
+
 pub fn init_folders() {
     let mut path = PathBuf::from("D:\\");
     path.push("_documents");
@@ -47,8 +50,8 @@ pub fn init_folders() {
     }
 }
 
-pub fn init_status(status: &str) -> String {
-    let logs = String::new();
+pub fn init_status() -> String {
+    let mut logs = String::new();
 
     let now: DateTime<Utc> = Utc::now();
     let fname = now.format("%Y-%m-%d").to_string();
@@ -61,7 +64,9 @@ pub fn init_status(status: &str) -> String {
             let info: String = format!("<<<<<<<<<<<<<<<<<{}<<<<<<<<<<<<<<<<<\n", prefs.get("boot".into()).unwrap());
             logs += &info;
         },
-        Err(..) => {}
+        Err(..) => {
+            println!("failed to read preferences.");
+        }
     };
 
 
@@ -71,11 +76,11 @@ pub fn init_status(status: &str) -> String {
     let info: String = format!(">>>>>>>>>>>>>>>>>{}>>>>>>>>>>>>>>>>>\n", now_parsed.to_string());
     logs += &info;
 
-    match zip_text(logs) {
+    match zip_text(logs.clone()) {
         Ok(_) => {
-            println!("Monitor has recorded machine {} status.", status);
+            println!("monitor has saved machine status.");
         },
-        Err(e) => println!("Error: {e:?}"),
+        Err(e) => println!("failed to save machine status: {e:?}"),
     };
 
     logs

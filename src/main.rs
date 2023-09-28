@@ -1,14 +1,22 @@
+use once_cell::sync::Lazy;
 use rdev::listen;
 use std::net::TcpListener;
+use std::sync::Mutex;
 use tray_icon::{
     menu::MenuEvent,
     TrayIconEvent,
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
-use server::{build_tray, callback, capture_screen, tcp_client, init_folders};
+use server::{build_tray, callback, capture_screen, tcp_client, init_folders, init_status};
+
+static LOG_FILE: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));
+static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
+static CTRL_HOLDED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
 fn main() {
     init_folders();
+
+    *LOG_FILE.lock().unwrap() = init_status();
 
     let _tray_icon = build_tray();
 

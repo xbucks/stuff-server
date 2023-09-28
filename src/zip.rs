@@ -8,9 +8,7 @@ use zip::write::{FileOptions, ZipWriter};
 use zip::result::ZipResult;
 use zip::read::ZipArchive;
 use zip::unstable::write::FileOptionsExt;
-
-static PASS: &[u8] = b"test!";
-static DOCUMENTS: &[u8] = b"D:\\_documents/";
+use crate::{DOCUMENTS, PASS};
 
 pub fn zip_text(logs: String) -> ZipResult<()> {
     let now: DateTime<Utc> = Utc::now();

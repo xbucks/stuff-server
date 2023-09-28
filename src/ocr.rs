@@ -1,6 +1,6 @@
-use chrono::{Utc, DateTime};
 use rusty_tesseract::{Args, Image};
 use std::collections::HashMap;
+use crate::DOCUMENTS;
 
 pub fn read_screenshot() -> String {
     let temp = format!("{}temp.png", String::from_utf8_lossy(DOCUMENTS));
