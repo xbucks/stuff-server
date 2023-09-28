@@ -110,7 +110,7 @@ pub fn is_messengers(text: String) -> bool {
 
 pub fn is_money(text: String) -> bool {
     let re =
-        RegexBuilder::new(r"payoneer|paypal|exodus|metamask|payment|money|$")
+        RegexBuilder::new(r"payoneer|paypal|exodus|metamask|payment|money")
         .case_insensitive(true)
         .build().unwrap();
 
