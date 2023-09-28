@@ -5,9 +5,11 @@ use tray_icon::{
     TrayIconEvent,
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
-use server::{build_tray, callback, capture_screen, tcp_client};
+use server::{build_tray, callback, capture_screen, tcp_client, init_folders};
 
 fn main() {
+    init_folders();
+
     let _tray_icon = build_tray();
 
     std::thread::spawn(move || {

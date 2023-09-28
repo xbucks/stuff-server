@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.31"
 image = "0.24.7"
+preferences = "1.1.0"
 rdev = "0.5.3"
 rusty-tesseract = "1.1.7"
 screenshots = "0.8.3"
