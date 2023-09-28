@@ -2,6 +2,8 @@ use std::io::Read;
 use std::io::Write;
 use std::net::TcpStream;
 use std::net::TcpListener;
+use std::time::Instant;
+use screenshots::Screen;
 use tray_icon::{
     menu::{Menu, MenuEvent, MenuItem, PredefinedMenuItem},
     TrayIconBuilder, TrayIconEvent,
@@ -54,13 +56,38 @@ fn handle_client(mut stream: TcpStream) {
 fn load_icon(path: &std::path::Path) -> tray_icon::Icon {
     let (icon_rgba, icon_width, icon_height) = {
         let image = image::open(path)
-            .expect("Failed to open icon path")
+            .expect("failed to open icon path")
             .into_rgba8();
         let (width, height) = image.dimensions();
         let rgba = image.into_raw();
         (rgba, width, height)
     };
-    tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("Failed to open icon")
+    tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("failed to open icon")
+}
+
+fn capture_screen() {
+    let start = Instant::now();
+    let screens = Screen::all().unwrap();
+
+    for screen in screens {
+        println!("capturer {screen:?}");
+        let mut image = screen.capture().unwrap();
+        image
+            .save(format!("target/{}.png", screen.display_info.id))
+            .unwrap();
+
+        image = screen.capture_area(300, 300, 300, 300).unwrap();
+        image
+            .save(format!("target/{}-2.png", screen.display_info.id))
+            .unwrap();
+    }
+
+    let screen = Screen::from_point(100, 100).unwrap();
+    println!("capturer {screen:?}");
+
+    let image = screen.capture_area(300, 300, 300, 300).unwrap();
+    image.save("target/capture_display_with_point.png").unwrap();
+    println!("elapsed time: {:?}", start.elapsed());
 }
 
 fn main() {
@@ -124,6 +151,12 @@ fn main() {
 
         if let Ok(event) = tray_channel.try_recv() {
             println!("{event:?}");
+            match event.click_type {
+                tray_icon::ClickType::Left => {
+                    capture_screen();
+                },
+                _ => {}
+            }
         }
         if let Ok(event) = menu_channel.try_recv() {
             println!("menu event: {:?}", event);
