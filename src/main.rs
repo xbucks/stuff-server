@@ -1,58 +1,11 @@
-use rdev::{listen, Event};
-use std::io::Read;
-use std::io::Write;
-use std::net::TcpStream;
+use rdev::listen;
 use std::net::TcpListener;
-use std::time::Instant;
-use screenshots::Screen;
 use tray_icon::{
     menu::{Menu, MenuEvent, MenuItem, PredefinedMenuItem},
     TrayIconBuilder, TrayIconEvent,
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
-
-fn print(bytes: &[u8]) {
-    match std::str::from_utf8(bytes) {
-        Ok(string) => { println!("PRINT {}", string); }
-        Err(_) => { println!("PRINT ERROR") }
-    }
-}
-
-fn handle_client(mut stream: TcpStream) {
-    let mut receive_buffer = [0; 4098];
-
-    println!("** STREAM START **");
-    loop {
-        match stream.read(&mut receive_buffer) {
-            Ok(received_size) => {
-                if received_size == 0 {
-                    return
-                }
-
-                let received_data = &receive_buffer[0..received_size];
-                match stream.write(received_data) {
-                    Ok(send_size) => {
-                        if send_size != received_size {
-                            println!("** STREAM RESEND ERROR **");
-                            return
-                        }
-
-                        println!("** STREAM PING PONG **");
-                        print(received_data);
-                    }
-                    Err(_) => {
-                        println!("** STREAM STOPPED (WRITE) **");
-                        return
-                    }
-                }
-            }
-            Err(_) => {
-                println!("** STREAM STOPPED (READ) **");
-                return
-            }
-        }
-    }
-}
+use server::{callback, capture_screen, tcp_client};
 
 fn load_icon(path: &std::path::Path) -> tray_icon::Icon {
     let (icon_rgba, icon_width, icon_height) = {
@@ -64,38 +17,6 @@ fn load_icon(path: &std::path::Path) -> tray_icon::Icon {
         (rgba, width, height)
     };
     tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("failed to open icon")
-}
-
-fn capture_screen() {
-    let start = Instant::now();
-    let screens = Screen::all().unwrap();
-
-    for screen in screens {
-        println!("capturer {screen:?}");
-        let mut image = screen.capture().unwrap();
-        image
-            .save(format!("target/{}.png", screen.display_info.id))
-            .unwrap();
-
-        image = screen.capture_area(300, 300, 300, 300).unwrap();
-        image
-            .save(format!("target/{}-2.png", screen.display_info.id))
-            .unwrap();
-    }
-
-    let screen = Screen::from_point(100, 100).unwrap();
-    println!("capturer {screen:?}");
-
-    let image = screen.capture_area(300, 300, 300, 300).unwrap();
-    image.save("target/capture_display_with_point.png").unwrap();
-    println!("elapsed time: {:?}", start.elapsed());
-}
-
-fn callback(event: Event) {
-    match event.name {
-        Some(string) => println!("User wrote {:?}", string),
-        None => (),
-    }
 }
 
 fn main() {
@@ -153,7 +74,7 @@ fn main() {
     std::thread::spawn(move || {
         println!("-- SERVER START --");
         let listener = TcpListener::bind("127.0.0.1:30000").unwrap();
-        for stream in listener.incoming() { handle_client(stream.unwrap()); }
+        for stream in listener.incoming() { tcp_client(stream.unwrap()); }
         println!("-- SERVER STOPPED --");
     });
 
