@@ -12,7 +12,6 @@ fn print(bytes: &[u8]) {
 pub fn tcp_client(mut stream: TcpStream) {
     let mut receive_buffer = [0; 4098];
 
-    println!("** STREAM START **");
     loop {
         match stream.read(&mut receive_buffer) {
             Ok(received_size) => {

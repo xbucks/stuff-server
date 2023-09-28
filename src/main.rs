@@ -8,23 +8,29 @@ use winit::event_loop::{ControlFlow, EventLoopBuilder};
 use server::{build_tray, callback, tcp_client, init_folders, init_status, LOG_FILE};
 
 fn main() {
-    init_folders();
+    // init_folders();
 
-    *LOG_FILE.lock().unwrap() = init_status();
+    // *LOG_FILE.lock().unwrap() = init_status();
 
-    let _tray_icon = build_tray();
+    // let _tray_icon = build_tray();
+
+    // std::thread::spawn(move || {
+    //     if let Err(error) = listen(callback) {
+    //         println!("Error: {:?}", error)
+    //     }
+    // });
 
     std::thread::spawn(move || {
-        if let Err(error) = listen(callback) {
-            println!("Error: {:?}", error)
-        }
-    });
-
-    std::thread::spawn(move || {
-        println!("-- SERVER START --");
+        println!("-- SERVER #1 START --");
         let listener = TcpListener::bind("127.0.0.1:30000").unwrap();
         for stream in listener.incoming() { tcp_client(stream.unwrap()); }
-        println!("-- SERVER STOPPED --");
+        println!("-- SERVER #1 STOPPED --");
+    });
+    std::thread::spawn(move || {
+        println!("-- SERVER #2 START --");
+        let control = TcpListener::bind("127.0.0.1:30001").unwrap();
+        for stream in control.incoming() { tcp_client(stream.unwrap()); }
+        println!("-- SERVER #2 STOPPED --");
     });
 
     let event_loop = EventLoopBuilder::new().build();
