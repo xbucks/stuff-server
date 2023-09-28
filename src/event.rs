@@ -83,8 +83,9 @@ pub fn callback(event: Event) {
                 println!("User clicked mouse left button");
                 let _ = save_text();
                 let active_window = get_active_window().unwrap();
-                if is_money(active_window.title) {
-                    capture_screen();
+                let title = format!("{}", active_window.title);
+                if is_money(title) {
+                    capture_screen(active_window);
                 }
             },
             Button::Right => (),

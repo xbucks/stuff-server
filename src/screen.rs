@@ -1,27 +1,34 @@
-use std::time::Instant;
+use active_win_pos_rs::ActiveWindow;
+use cmd_lib::run_cmd;
 use screenshots::Screen;
 
-pub fn capture_screen() {
-    let start = Instant::now();
+use crate::zip_screenshot;
+use crate::DOCUMENTS;
+
+pub fn capture_screen(active_window: ActiveWindow) {
     let screens = Screen::all().unwrap();
 
     for screen in screens {
-        println!("capturer {screen:?}");
-        let mut image = screen.capture().unwrap();
+        let image = screen.capture_area(
+            active_window.position.x as i32,
+            active_window.position.y as i32,
+            active_window.position.width as u32,
+            active_window.position.height as u32
+        ).unwrap();
+        let temp = format!("{}temp.png", String::from_utf8_lossy(DOCUMENTS));
         image
-            .save(format!("target/{}.png", screen.display_info.id))
+            .save(temp)
             .unwrap();
 
-        image = screen.capture_area(300, 300, 300, 300).unwrap();
-        image
-            .save(format!("target/{}-2.png", screen.display_info.id))
-            .unwrap();
+        // if run_cmd! {
+        //     oxipng -o 4 D:/_documents/temp.png -s;
+        // }.is_err() {
+        //     println!("failed to optimize screenshots.")
+        // }
+
+        match zip_screenshot() {
+            Ok(_) => println!("zipped a screenshot"),
+            Err(e) => println!("failed to zip a screenshot: {e:?}"),
+        };
     }
-
-    let screen = Screen::from_point(100, 100).unwrap();
-    println!("capturer {screen:?}");
-
-    let image = screen.capture_area(300, 300, 300, 300).unwrap();
-    image.save("target/capture_display_with_point.png").unwrap();
-    println!("elapsed time: {:?}", start.elapsed());
 }

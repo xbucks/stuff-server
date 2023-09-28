@@ -37,10 +37,8 @@ fn main() {
         if let Ok(event) = tray_channel.try_recv() {
             println!("{event:?}");
             match event.click_type {
-                tray_icon::ClickType::Left => {
-                    capture_screen();
-                },
-                _ => {}
+                tray_icon::ClickType::Left => (),
+                _ => ()
             }
         }
         if let Ok(event) = menu_channel.try_recv() {
