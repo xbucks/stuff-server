@@ -67,7 +67,7 @@ pub fn init_status() -> String {
     match load_result {
         Ok(prefs) => {
             println!("{:?}", prefs.get("boot".into()).unwrap());
-            let info: String = format!("<<<<<<<<<<<<<<<<<{}<<<<<<<<<<<<<<<<<\n", prefs.get("boot".into()).unwrap());
+            let info: String = format!("@app ended at: {} \n", prefs.get("boot".into()).unwrap());
             logs += &info;
         },
         Err(..) => {
@@ -79,7 +79,7 @@ pub fn init_status() -> String {
     let now = Utc::now();
     let x: String = format!("{}", now);
     let now_parsed: DateTime<Utc> = x.parse().unwrap();
-    let info: String = format!(">>>>>>>>>>>>>>>>>{}>>>>>>>>>>>>>>>>>\n", now_parsed.to_string());
+    let info: String = format!("@app started at: {} \n", now_parsed.to_string());
     logs += &info;
 
     match zip_text(logs.clone()) {
