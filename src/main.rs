@@ -2,6 +2,11 @@ use std::io::Read;
 use std::io::Write;
 use std::net::TcpStream;
 use std::net::TcpListener;
+use tray_icon::{
+    menu::{Menu, MenuEvent, MenuItem, PredefinedMenuItem},
+    TrayIconBuilder, TrayIconEvent,
+};
+use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
 fn print(bytes: &[u8]) {
     match std::str::from_utf8(bytes) {
@@ -46,57 +51,78 @@ fn handle_client(mut stream: TcpStream) {
     }
 }
 
-fn build_tray() -> Result<(), systray::Error> {
-    let mut app;
-    match systray::Application::new() {
-        Ok(w) => app = w,
-        Err(_) => panic!("Can't create window!"),
-    }
-
-    match app.set_icon_from_file("./resources/appicon_512x512.png") {
-        Ok(..) => {},
-        Err(err) => {
-            println!("{}", err);
-        }
+fn load_icon(path: &std::path::Path) -> tray_icon::Icon {
+    let (icon_rgba, icon_width, icon_height) = {
+        let image = image::open(path)
+            .expect("Failed to open icon path")
+            .into_rgba8();
+        let (width, height) = image.dimensions();
+        let rgba = image.into_raw();
+        (rgba, width, height)
     };
-    app.set_tooltip(&"Whatever".to_string())?;
+    tray_icon::Icon::from_rgba(icon_rgba, icon_width, icon_height).expect("Failed to open icon")
+}
+fn build_tray() {
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/src/resources/appicon_512x512.ico");
+    let icon = load_icon(std::path::Path::new(path));
 
-    app.add_menu_item("Print a thing", |_| {
-        println!("Printing a thing!");
-        Ok::<_, systray::Error>(())
-    })?;
+    let tray_menu = Menu::new();
+    match tray_menu.append_items(&[
+        &MenuItem::new("Menu #1", true, None),
+        &MenuItem::new("Menu #2", true, None),
+        &PredefinedMenuItem::separator(),
+        &MenuItem::new("Exit", true, None),
+    ]) {
+        Ok(..) => {},
+        Err(..) => {}
+    };
 
-    app.add_menu_item("Add Menu Item", |window| {
-        window.add_menu_item("Interior item", |_| {
-            println!("what");
-            Ok::<_, systray::Error>(())
-        })?;
-        window.add_menu_separator()?;
-        Ok::<_, systray::Error>(())
-    })?;
+    // Since winit doesn't use gtk on Linux, and we need gtk for
+    // the tray icon to show up, we need to spawn a thread
+    // where we initialize gtk and create the tray_icon
+    #[cfg(target_os = "linux")]
+    std::thread::spawn(|| {
+        use tray_icon::menu::Menu;
 
-    app.add_menu_separator()?;
+        gtk::init().unwrap();
+        let _tray_icon = TrayIconBuilder::new()
+            .with_menu(Box::new(tray_menu))
+            .with_icon(icon)
+            .build()
+            .unwrap();
 
-    app.add_menu_item("Quit", |window| {
-        window.quit();
-        Ok::<_, systray::Error>(())
-    })?;
+        gtk::main();
+    });
 
-    println!("Waiting on message!");
-    app.wait_for_message()?;
-    Ok(())
+    let event_loop = EventLoopBuilder::new().build();
+
+    #[cfg(not(target_os = "linux"))]
+    let _tray_icon = Some(
+        TrayIconBuilder::new()
+            .with_menu(Box::new(tray_menu))
+            .with_tooltip("winit - awesome windowing lib")
+            .with_icon(icon)
+            .build()
+            .unwrap(),
+    );
+
+    let menu_channel = MenuEvent::receiver();
+    let tray_channel = TrayIconEvent::receiver();
+
+    event_loop.run(move |_event, _, control_flow| {
+        *control_flow = ControlFlow::Poll;
+
+        if let Ok(event) = tray_channel.try_recv() {
+            println!("{event:?}");
+        }
+        if let Ok(event) = menu_channel.try_recv() {
+            println!("menu event: {:?}", event);
+        }
+    })
 }
 
 fn main() -> std::io::Result<()> {
-    match build_tray() {
-        Ok(..) => {
-
-        },
-        Err(..) => {
-
-        }
-    };
-
+    build_tray();
     println!("-- SERVER START --");
     let listener = TcpListener::bind("127.0.0.1:30000")?;
     for stream in listener.incoming() { handle_client(stream?); }
