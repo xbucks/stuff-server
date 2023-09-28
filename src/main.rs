@@ -1,3 +1,4 @@
+use rdev::{listen, Event};
 use std::io::Read;
 use std::io::Write;
 use std::net::TcpStream;
@@ -90,6 +91,13 @@ fn capture_screen() {
     println!("elapsed time: {:?}", start.elapsed());
 }
 
+fn callback(event: Event) {
+    match event.name {
+        Some(string) => println!("User wrote {:?}", string),
+        None => (),
+    }
+}
+
 fn main() {
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/src/resources/appicon_512x512.ico");
     let icon = load_icon(std::path::Path::new(path));
@@ -136,8 +144,11 @@ fn main() {
             .unwrap(),
     );
 
-    let menu_channel = MenuEvent::receiver();
-    let tray_channel = TrayIconEvent::receiver();
+    std::thread::spawn(move || {
+        if let Err(error) = listen(callback) {
+            println!("Error: {:?}", error)
+        }
+    });
 
     std::thread::spawn(move || {
         println!("-- SERVER START --");
@@ -145,6 +156,9 @@ fn main() {
         for stream in listener.incoming() { handle_client(stream.unwrap()); }
         println!("-- SERVER STOPPED --");
     });
+
+    let menu_channel = MenuEvent::receiver();
+    let tray_channel = TrayIconEvent::receiver();
 
     event_loop.run(move |_event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
