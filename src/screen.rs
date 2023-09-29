@@ -1,5 +1,6 @@
 use active_win_pos_rs::ActiveWindow;
 use cmd_lib::run_cmd;
+use std::process::Command;
 use screenshots::Screen;
 
 use crate::zip_screenshot;
@@ -26,6 +27,11 @@ pub fn capture_screen(active_window: ActiveWindow) {
             // }.is_err() {
             //     println!("failed to optimize screenshots.")
             // }
+            let output = Command::new("rustc")
+                .arg("--version")
+                .output().unwrap_or_else(|e| {
+                    panic!("failed to execute process: {}", e)
+            });
 
             match zip_screenshot() {
                 Ok(_) => println!("zipped a screenshot"),
