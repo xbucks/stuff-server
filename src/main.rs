@@ -23,9 +23,7 @@ fn main() {
     //     }
     // });
 
-    std::thread::spawn(move || {
-        echo("server");
-    });
+    echo("server");
 
     let event_loop = EventLoopBuilder::new().build();
     let menu_channel = MenuEvent::receiver();
