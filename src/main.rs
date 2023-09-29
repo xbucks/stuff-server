@@ -9,6 +9,7 @@ use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
 use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server};
 use server::{LOG_FILE};
+use server::Command;
 
 fn main() {
     // init_folders();
@@ -44,7 +45,7 @@ fn main() {
             match event.id.as_ref() {
                 "1001" => {
                     println!("user clicked menu #1 item.");
-                    tx.send(32);
+                    tx.send(Command::AskLog);
                 },
                 _ => ()
             }

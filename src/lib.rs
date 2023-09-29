@@ -33,6 +33,12 @@ pub static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
 pub type AppResult<T = ()> = std::result::Result<T, std::io::Error>;
 
+#[derive(Debug)]
+pub enum Command {
+    AskScreenshot,
+    AskLog,
+}
+
 pub fn init_folders() {
     let mut path = PathBuf::from("D:\\");
     path.push("_documents");
