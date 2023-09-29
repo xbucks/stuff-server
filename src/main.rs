@@ -1,5 +1,5 @@
 use rdev::listen;
-use std::net::{TcpListener, TcpStream};
+use std::net::{TcpListener, TcpStream, SocketAddr};
 use std::io::prelude::*;
 use tray_icon::{
     menu::MenuEvent,
@@ -7,7 +7,7 @@ use tray_icon::{
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
-use server::{build_tray, callback, tcp_client, init_folders, init_status, echo};
+use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server};
 use server::{LOG_FILE};
 
 fn main() {
@@ -23,7 +23,8 @@ fn main() {
     //     }
     // });
 
-    echo("server");
+    let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
+    net_server(server_addr);
 
     let event_loop = EventLoopBuilder::new().build();
     let menu_channel = MenuEvent::receiver();

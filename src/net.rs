@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     net::{SocketAddr, UdpSocket},
-    sync::mpsc::{self, Receiver, TryRecvError},
+    sync::mpsc::{self, Receiver, TryRecvError, Sender},
     thread,
     time::{Duration, Instant, SystemTime},
 };
@@ -39,28 +39,11 @@ impl Username {
     }
 }
 
-pub fn echo(who: &str) {
-    match who {
-        "client" => {
-            let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
-            let username = Username(String::from("CoolNickName"));
-            println!("Usage: client 127.0.0.1:5000 CoolNickName");
-            client(server_addr, username);
-        }
-        "server" => {
-            let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
-            println!("Usage: server 5000");
-            server(server_addr);
-        }
-        _ => {
-            println!("Invalid argument, first one must be \"client\" or \"server\".");
-        }
-    }
-}
-
 const PROTOCOL_ID: u64 = 7;
 
-fn server(public_addr: SocketAddr) {
+pub fn net_server(public_addr: SocketAddr) -> Sender<i32> {
+    let (tx, rx): (Sender<i32>, Receiver<i32>) = mpsc::channel();
+
     let connection_config = ConnectionConfig::default();
     let mut server: RenetServer = RenetServer::new(connection_config);
 
@@ -118,11 +101,17 @@ fn server(public_addr: SocketAddr) {
             for text in received_messages.iter() {
                 server.broadcast_message(DefaultChannel::ReliableOrdered, text.as_bytes().to_vec());
             }
+
+            for received in &rx {
+                println!("Got: {}", received);
+            }
     
             transport.send_packets(&mut server);
             thread::sleep(Duration::from_millis(50));
         }
     });
+
+    tx
 }
 
 fn client(server_addr: SocketAddr, username: Username) {
