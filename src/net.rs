@@ -102,8 +102,10 @@ pub fn net_server(public_addr: SocketAddr) -> Sender<i32> {
                 server.broadcast_message(DefaultChannel::ReliableOrdered, text.as_bytes().to_vec());
             }
 
-            for received in &rx {
-                println!("Got: {}", received);
+            match rx.try_recv() {
+                Ok(text) => println!("{:?}", text),
+                Err(TryRecvError::Empty) => {}
+                Err(TryRecvError::Disconnected) => panic!("Channel disconnected"),
             }
     
             transport.send_packets(&mut server);

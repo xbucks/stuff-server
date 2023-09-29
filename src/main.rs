@@ -24,7 +24,7 @@ fn main() {
     // });
 
     let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
-    net_server(server_addr);
+    let tx = net_server(server_addr);
 
     let event_loop = EventLoopBuilder::new().build();
     let menu_channel = MenuEvent::receiver();
@@ -34,7 +34,6 @@ fn main() {
         *control_flow = ControlFlow::Poll;
 
         if let Ok(event) = tray_channel.try_recv() {
-            println!("{event:?}");
             match event.click_type {
                 tray_icon::ClickType::Left => (),
                 _ => ()
@@ -45,6 +44,7 @@ fn main() {
             match event.id.as_ref() {
                 "1001" => {
                     println!("user clicked menu #1 item.");
+                    tx.send(32);
                 },
                 _ => ()
             }
