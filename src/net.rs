@@ -116,6 +116,13 @@ pub fn net_server(public_addr: SocketAddr) -> Sender<i32> {
     tx
 }
 
+pub fn net_client(who: &str) {
+    let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
+    let username = Username(who.to_string());
+    println!("Usage: client 127.0.0.1:5000 CoolNickName");
+    client(server_addr, username);
+}
+
 fn client(server_addr: SocketAddr, username: Username) {
     let connection_config = ConnectionConfig::default();
     let mut client = RenetClient::new(connection_config);

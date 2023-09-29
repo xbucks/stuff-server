@@ -12,7 +12,7 @@ pub use event::callback;
 pub use tray::build_tray;
 pub use zip::{read_zip, zip_screenshot, zip_text};
 pub use ocr::read_screenshot;
-pub use net::net_server;
+pub use net::{net_server, net_client};
 
 use chrono::{Utc, DateTime};
 use once_cell::sync::Lazy;
