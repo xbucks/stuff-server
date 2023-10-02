@@ -7,7 +7,7 @@ use tray_icon::{
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
-use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server};
+use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server, p2p};
 use server::{LOG_FILE};
 use server::Command;
 
@@ -26,6 +26,7 @@ fn main() {
 
     let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
     let tx = net_server(server_addr);
+
 
     let event_loop = EventLoopBuilder::new().build();
     let menu_channel = MenuEvent::receiver();

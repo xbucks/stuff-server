@@ -4,6 +4,7 @@ use qp2p::{Endpoint, WireMsg};
 use std::{
     env,
     net::{Ipv4Addr, SocketAddr},
+    sync::mpsc::{self, Receiver, Sender, TryRecvError}
 };
 
 #[derive(Default, Ord, PartialEq, PartialOrd, Eq, Clone, Copy)]
@@ -11,7 +12,7 @@ struct XId(pub [u8; 32]);
 
 
 #[tokio::main]
-pub async fn p2p() -> Result<()> {
+pub async fn p2p(rx: Receiver<u16>) -> Result<()>  {
     color_eyre::install()?;
 
     const MSG_MARCO: &str = "marco";
