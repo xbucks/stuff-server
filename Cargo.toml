@@ -9,8 +9,10 @@ author = "Hiroki Moto"
 [dependencies]
 active-win-pos-rs = "0.8.2"
 arboard = "3.2.1"
+bytes = "1.5.0"
 chrono = "0.4.31"
 cmd_lib = "1.3.0"
+color-eyre = "0.6.2"
 image = "0.24.7"
 once_cell = "1.18.0"
 preferences = "1.1.0"
@@ -21,13 +23,10 @@ renet = "0.0.13"
 rusty-tesseract = "1.1.7"
 screenshots = "0.8.3"
 serde = "1.0.188"
+tokio = { version = "0.2.22", features = ["full"] }
 tray-icon = "0.9.0"
 zip = "0.6.6"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 winit = "0.28"
 winapi = { version = "0.3", features = ["winuser", "errhandlingapi", "processthreadsapi"] }
-
-
-[dev-dependencies]
-color-eyre = "0.6.2"
