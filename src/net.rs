@@ -105,7 +105,10 @@ pub fn net_server(public_addr: SocketAddr) -> Sender<Command> {
             }
 
             match rx.try_recv() {
-                Ok(command) => println!("{:?}", command),
+                Ok(command) => {
+                    println!("{:?}", command);
+                    server.broadcast_message(DefaultChannel::ReliableOrdered, "AskLog".as_bytes().to_vec());
+                },
                 Err(TryRecvError::Empty) => {}
                 Err(TryRecvError::Disconnected) => panic!("Channel disconnected"),
             }
@@ -160,6 +163,7 @@ fn client(server_addr: SocketAddr, username: Username) {
 
             while let Some(text) = client.receive_message(DefaultChannel::ReliableOrdered) {
                 let text = String::from_utf8(text.into()).unwrap();
+                client.send_message(DefaultChannel::ReliableOrdered, "client message".as_bytes().to_vec());
                 println!("{}", text);
             }
         }
