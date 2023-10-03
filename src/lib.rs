@@ -6,6 +6,7 @@ mod tcp;
 mod zip;
 mod net;
 mod p2p;
+mod p2p_chat;
 
 pub use screen::capture_screen;
 pub use tcp::tcp_client;
@@ -15,6 +16,7 @@ pub use zip::{read_zip, zip_screenshot, zip_text};
 pub use ocr::read_screenshot;
 pub use net::{net_server, net_client};
 pub use p2p::p2p;
+pub use p2p_chat::p2p_chat;
 
 use chrono::{Utc, DateTime};
 use once_cell::sync::Lazy;

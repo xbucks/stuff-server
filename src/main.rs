@@ -7,7 +7,7 @@ use tray_icon::{
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
-use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server, p2p};
+use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server, p2p, p2p_chat};
 use server::{LOG_FILE};
 use server::Command;
 
@@ -24,9 +24,9 @@ fn main() {
     //     }
     // });
 
-    let server_addr: SocketAddr = format!("127.0.0.1:{}", 5000).parse().unwrap();
-    let tx = net_server(server_addr);
-
+    std::thread::spawn(move || {
+        p2p_chat();
+    });
 
     let event_loop = EventLoopBuilder::new().build();
     let menu_channel = MenuEvent::receiver();
@@ -46,7 +46,6 @@ fn main() {
             match event.id.as_ref() {
                 "1001" => {
                     println!("user clicked menu #1 item.");
-                    tx.send(Command::AskLog);
                 },
                 _ => ()
             }
