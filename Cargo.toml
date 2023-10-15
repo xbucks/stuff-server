@@ -14,9 +14,12 @@ bytes = "1.5.0"
 chrono = "0.4.31"
 cmd_lib = "1.3.0"
 color-eyre = "0.6.2"
+eframe = "0.23.0"
+egui = "0.23.0"
+egui_extras = { version = "*", features = ["all_loaders"] }
 env_logger = "0.10.0"
 futures = "0.3.28"
-image = "0.24.7"
+image = { version = "0.24.7", features = ["jpeg", "png"] }
 libp2p = { version = "0.52.3", features = ["tokio", "gossipsub", "mdns", "noise", "macros", "tcp", "yamux", "quic"] }
 libp2p-core = "0.40.1"
 once_cell = "1.18.0"
@@ -30,6 +33,7 @@ screenshots = "0.8.3"
 serde = "1.0.188"
 tokio = { version = "1.32.0", features = ["full"] }
 tray-icon = "0.9.0"
+winapi = "0.3"
 zip = "0.6.6"
 
 [target.'cfg(target_os = "windows")'.dependencies]
