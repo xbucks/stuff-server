@@ -1,31 +1,24 @@
 use rdev::listen;
-use std::net::{TcpListener, TcpStream, SocketAddr};
-use std::io::prelude::*;
 use tray_icon::{
     menu::MenuEvent,
     TrayIconEvent,
 };
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
-use server::{build_tray, callback, tcp_client, init_folders, init_status, net_server, p2p, p2p_chat};
+use server::{build_tray, callback, init_folders, init_status};
 use server::{LOG_FILE};
-use server::Command;
 
 fn main() {
-    // init_folders();
+    init_folders();
 
-    // *LOG_FILE.lock().unwrap() = init_status();
+    *LOG_FILE.lock().unwrap() = init_status();
 
     let _tray_icon = build_tray();
 
-    // std::thread::spawn(move || {
-    //     if let Err(error) = listen(callback) {
-    //         println!("Error: {:?}", error)
-    //     }
-    // });
-
     std::thread::spawn(move || {
-        p2p_chat();
+        if let Err(error) = listen(callback) {
+            println!("Error: {:?}", error)
+        }
     });
 
     let event_loop = EventLoopBuilder::new().build();
