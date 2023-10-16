@@ -18,7 +18,8 @@ pub use ocr::read_screenshot;
 pub use net::{net_server, net_client};
 pub use p2p::p2p;
 pub use p2p_chat::p2p_chat;
-pub use screens::settings::Settings;
+pub use screens::settings::build_settings;
+pub use screens::clock::build_clock;
 
 use chrono::{Utc, DateTime};
 use once_cell::sync::Lazy;

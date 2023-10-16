@@ -19,6 +19,7 @@ egui = "0.23.0"
 egui_extras = { version = "*", features = ["all_loaders"] }
 env_logger = "0.10.0"
 futures = "0.3.28"
+iced = { version = "0.10.0", features = ["canvas", "tokio", "debug"] }
 image = { version = "0.24.7", features = ["jpeg", "png"] }
 libp2p = { version = "0.52.3", features = ["tokio", "gossipsub", "mdns", "noise", "macros", "tcp", "yamux", "quic"] }
 libp2p-core = "0.40.1"
@@ -31,6 +32,7 @@ renet = "0.0.13"
 rusty-tesseract = "1.1.7"
 screenshots = "0.8.3"
 serde = "1.0.188"
+time = { version = "0.3.30", features = ["local-offset"] }
 tokio = { version = "1.32.0", features = ["full"] }
 tray-icon = "0.9.0"
 winapi = "0.3"

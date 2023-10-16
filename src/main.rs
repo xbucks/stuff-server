@@ -1,12 +1,15 @@
+use core::mem::MaybeUninit;
 use rdev::listen;
 use tray_icon::{
     menu::MenuEvent,
     TrayIconEvent,
 };
+use winapi::um::winuser;
 use winit::event_loop::{ControlFlow, EventLoopBuilder};
 
-use server::{build_tray, callback, init_folders, init_status};
+use server::{build_tray, callback, init_folders, init_status, build_clock};
 use server::{LOG_FILE};
+use server::build_settings;
 
 fn main() {
     init_folders();
@@ -20,6 +23,9 @@ fn main() {
             println!("Error: {:?}", error)
         }
     });
+
+    // build_settings();
+    // build_clock();
 
     let event_loop = EventLoopBuilder::new().build();
     let menu_channel = MenuEvent::receiver();
@@ -40,6 +46,12 @@ fn main() {
                 "1001" => {
                     println!("user clicked menu #1 item.");
                 },
+                "1002" => {
+
+                },
+                "1004" => {
+
+                }
                 _ => ()
             }
         }

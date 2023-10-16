@@ -1,4 +1,30 @@
-pub struct Settings {
+use eframe::egui;
+
+pub fn build_settings() {
+    let options = eframe::NativeOptions {
+        initial_window_size: Some(egui::vec2(320.0, 240.0)),
+        ..Default::default()
+    };
+    match eframe::run_native(
+        "My egui App",
+        options,
+        Box::new(|cc| {
+            // This gives us image support:
+            egui_extras::install_image_loaders(&cc.egui_ctx);
+
+            Box::<Settings>::default()
+        }),
+    ) {
+        Ok(ok) => {
+            println!("Success: {:?}", ok);
+        },
+        Err(err) => {
+            println!("Error:   {}", err);
+        }
+    };
+}
+
+struct Settings {
     name: String,
     age: u32,
 }
