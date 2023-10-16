@@ -6,6 +6,7 @@ use iced::{
     Application, Color, Command, Element, Length, Point, Rectangle, Renderer,
     Settings, Subscription, Theme, Vector,
 };
+use winit::event_loop::EventLoop;
 
 pub fn build_clock() -> iced::Result {
     Clock::run(Settings {
