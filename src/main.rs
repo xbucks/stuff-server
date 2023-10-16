@@ -1,3 +1,8 @@
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
+
 use core::mem::MaybeUninit;
 use rdev::listen;
 use tray_icon::{
@@ -50,7 +55,7 @@ fn main() {
 
                 },
                 "1004" => {
-
+                    std::process::exit(0);
                 }
                 _ => ()
             }
