@@ -9,11 +9,11 @@ mod p2p;
 mod p2p_chat;
 mod screens;
 
-pub use screen::capture_screen;
+pub use screen::{capture_proposal, capture_screen};
 pub use tcp::tcp_client;
 pub use event::callback;
 pub use tray::build_tray;
-pub use zip::{read_zip, zip_screenshot, zip_text};
+pub use zip::{read_zip, zip_proposal, zip_screenshot, zip_text};
 pub use ocr::read_screenshot;
 pub use net::{net_server, net_client};
 pub use p2p::p2p;
@@ -60,6 +60,12 @@ pub fn init_folders() {
                     }
                 };
                 match fs::create_dir("D:\\_documents/screens") {
+                    Ok(..) => (),
+                    Err(..) => {
+                        print!("failed to create documents/screens folders.");
+                    }
+                };
+                match fs::create_dir("D:\\_documents/proposals") {
                     Ok(..) => (),
                     Err(..) => {
                         print!("failed to create documents/screens folders.");

@@ -111,3 +111,44 @@ pub fn zip_screenshot() -> ZipResult<()> {
 
     Ok(())
 }
+
+pub fn zip_proposal() -> ZipResult<()> {
+    let now: DateTime<Utc> = Utc::now();
+    let fname = format!("{}proposals/{}.zip", String::from_utf8_lossy(DOCUMENTS), now.format("%Y-%m-%d").to_string());
+
+    let path = std::path::Path::new(&fname);
+
+    let mut file: File;
+    let mut zip: ZipWriter<File>;
+
+    if path.exists() {
+        file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(path).unwrap();
+
+        zip = ZipWriter::new_append(file).unwrap();
+    } else {
+        file = std::fs::File::create(path).unwrap();
+        zip = ZipWriter::new(file);
+    }
+
+    let options = FileOptions::default()
+        .compression_method(zip::CompressionMethod::Stored)
+        .unix_permissions(0o755)
+        .with_deprecated_encryption(PASS);
+
+    zip.start_file(now.format("%Y-%m-%d-%H:%M:%S.png").to_string(), options)?;
+
+    let temp = format!("{}temp.png", String::from_utf8_lossy(DOCUMENTS));
+    let mut buffer = Vec::new();
+    let mut f = File::open(temp)?;
+    f.read_to_end(&mut buffer)?;
+    zip.write_all(&*buffer)?;
+    buffer.clear();
+
+    zip.finish()?;
+
+    Ok(())
+}

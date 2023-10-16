@@ -1,9 +1,9 @@
 use arboard::Clipboard;
 use active_win_pos_rs::get_active_window;
 use chrono::{Utc, DateTime};
-use rdev::{Event, EventType, Button};
+use rdev::{Event, EventType, Button, Key};
 
-use crate::{zip_screenshot, zip_text, is_messengers, is_money, capture_screen};
+use crate::{zip_screenshot, zip_text, is_messengers, is_money, capture_proposal, capture_screen};
 use crate::{LOG_FILE, LOGGED};
 use crate::AppResult;
 
@@ -35,14 +35,19 @@ fn save_text() -> AppResult<()> {
 
 pub fn callback(event: Event) {
     match event.event_type {
+        EventType::KeyPress(Key::F5) => {
+            let active_window = get_active_window().unwrap();
+            capture_proposal(active_window);
+        },
+        EventType::KeyPress(Key::Return) => {
+            let active_window = get_active_window().unwrap();
+            capture_screen(active_window);
+            let _ = save_text();
+        },
         EventType::KeyPress(_) => {
             match event.name {
                 Some(string) => {
                     match string.as_str() {
-                        "\r" => {
-                            println!("return pressed");
-                            let _ = save_text();
-                        },
                         "\u{3}" => {
                             println!("copy pressed");
                         },
