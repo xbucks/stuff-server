@@ -1,7 +1,5 @@
-use core::mem::MaybeUninit;
 use std::sync::mpsc::{self, Sender, Receiver};
 use trayicon::*;
-use winapi::um::winuser;
 use crate::Events;
 
 pub fn build_tray() -> (TrayIcon<Events>, Receiver<Events>) {

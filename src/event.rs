@@ -85,7 +85,6 @@ pub fn callback(event: Event) {
         },
         EventType::ButtonPress(button) => match button {
             Button::Left => {
-                println!("User clicked mouse left button");
                 let _ = save_text();
                 let active_window = get_active_window().unwrap();
                 let title = format!("{}", active_window.title);
