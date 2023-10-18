@@ -36,6 +36,7 @@ time = { version = "0.3.30", features = ["local-offset"] }
 tokio = { version = "1.32.0", features = ["full"] }
 trayicon = "0.1.3"
 winapi = "0.3"
+winsafe = { version = "0.0.18", features = ["gui"] }
 zip = "0.6.6"
 
 [target.'cfg(target_os = "windows")'.dependencies]

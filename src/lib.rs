@@ -18,14 +18,12 @@ pub use ocr::read_screenshot;
 pub use net::{net_server, net_client};
 pub use p2p::p2p;
 pub use p2p_chat::p2p_chat;
-pub use screens::settings::build_settings;
-pub use screens::clock::build_clock;
+pub use screens::report::build_report;
 
 use chrono::{Utc, DateTime};
 use once_cell::sync::Lazy;
 use preferences::{AppInfo, PreferencesMap, Preferences};
 use regex::RegexBuilder;
-use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;

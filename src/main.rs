@@ -7,10 +7,9 @@ use core::mem::MaybeUninit;
 use rdev::listen;
 use winapi::um::winuser;
 
-use server::{build_tray, callback, init_folders, init_status, build_clock};
-use server::{LOG_FILE};
-use server::build_settings;
 use server::Events;
+use server::{build_tray, build_report, callback, init_folders, init_status};
+use server::{LOG_FILE};
 
 fn main() {
     init_folders();
@@ -38,6 +37,7 @@ fn main() {
             }
             Events::Item1 => {
                 println!("Please item1");
+                build_report();
             }
             Events::Item2 => {
                 println!("Please item2");
@@ -50,9 +50,6 @@ fn main() {
             }
         })
     });
-
-    // build_settings();
-    build_clock();
 
     loop {
         unsafe {
