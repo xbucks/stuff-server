@@ -8,7 +8,7 @@ use rdev::listen;
 use winapi::um::winuser;
 
 use server::Events;
-use server::{build_tray, build_report, callback, init_folders, init_status};
+use server::{build_tray, build_report, build_results, callback, init_folders, init_status};
 use server::{LOG_FILE};
 
 fn main() {
@@ -41,6 +41,7 @@ fn main() {
             }
             Events::Item2 => {
                 println!("Please item2");
+                build_results();
             }
             Events::Item3 => {
                 println!("Please item3");

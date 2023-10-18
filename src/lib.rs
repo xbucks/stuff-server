@@ -1,3 +1,6 @@
+extern crate native_windows_gui as nwg;
+extern crate native_windows_derive as nwd;
+
 mod tray;
 mod event;
 mod ocr;
@@ -19,6 +22,7 @@ pub use net::{net_server, net_client};
 pub use p2p::p2p;
 pub use p2p_chat::p2p_chat;
 pub use screens::report::build_report;
+pub use screens::results::build_results;
 
 use chrono::{Utc, DateTime};
 use once_cell::sync::Lazy;
