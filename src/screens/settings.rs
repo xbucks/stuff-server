@@ -1,5 +1,4 @@
 use eframe::egui;
-use winit::event_loop::EventLoop;
 
 pub fn build_settings() {
     let options = eframe::NativeOptions {
