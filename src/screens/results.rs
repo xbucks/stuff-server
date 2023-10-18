@@ -19,7 +19,7 @@ pub fn build_results() {
 
 #[derive(Default, NwgUi)]
 pub struct ConfigDlg {
-    #[nwg_control(size: (500, 400), position: (300, 300), title: "DynLayout")]
+    #[nwg_control(size: (500, 400), position: (300, 300), title: "Report")]
     #[nwg_events(OnInit: [ConfigDlg::init], OnResize: [ConfigDlg::size], OnWindowClose: [ConfigDlg::exit])]
     window: nwg::Window,
 
@@ -44,6 +44,8 @@ pub struct ConfigDlg {
     #[nwg_partial(parent: frame)]
     #[nwg_events((save_btn, OnButtonClick): [ConfigDlg::save])]
     controls: Controls,
+
+
 }
 
 impl ConfigDlg {
@@ -84,21 +86,34 @@ pub struct Controls {
     label1: nwg::Label,
     #[nwg_control(text: "What:", h_align: HTextAlign::Right, position: (10, 40), size: (100, 20))]
     label2: nwg::Label,
-
-    // #[nwg_control(text: "John Doe", position: (120, 10), size: (100, 20))]
-    // #[nwg_events(OnChar: [print_char(EVT_DATA)])]
-    // name_input: nwg::TextInput,
-    // #[nwg_control(text: "75", flags: "NUMBER|VISIBLE", position: (120, 40), size: (100, 20))]
-    // age_input: nwg::TextInput,
-    // #[nwg_control(text: "Programmer", position: (120, 70), size: (100, 25))]
-    // job_input: nwg::TextInput,
+    #[nwg_control(text: "Where:", h_align: HTextAlign::Right, position: (10, 70), size: (100, 20))]
+    label3: nwg::Label,
+    #[nwg_control(text: "Amount:", h_align: HTextAlign::Right, position: (10, 100), size: (100, 20))]
+    label4: nwg::Label,
+    #[nwg_control(text: "Hours:", h_align: HTextAlign::Right, position: (10, 130), size: (100, 20))]
+    label5: nwg::Label,
+    #[nwg_control(text: "Note:", h_align: HTextAlign::Right, position: (10, 160), size: (100, 20))]
+    label6: nwg::Label,
 
     #[nwg_control(collection: vec!["Morning", "Afternoon", "Evening"], position: (120, 10), size: (100, 20), selected_index: Some(0))]
     when_cbx: nwg::ComboBox<&'static str>,
 
     #[nwg_control(collection: vec!["Bid", "Develop", "Chat"], position: (120, 40), size: (100, 20), selected_index: Some(0))]
-    #[nwg_events(OnComboxBoxSelection: [print_char(EVT_DATA)])]
-    type_cpx: nwg::ComboBox<&'static str>,
+    #[nwg_events(OnComboxBoxSelection: [print_selected(EVT_DATA)])]
+    type_cbx: nwg::ComboBox<&'static str>,
+
+    #[nwg_control(collection: vec!["Upwork", "Freelancer", "LinkedIn"], position: (120, 70), size: (100, 20), selected_index: Some(0))]
+    #[nwg_events(OnComboxBoxSelection: [print_selected(EVT_DATA)])]
+    where_cbx: nwg::ComboBox<&'static str>,
+
+    #[nwg_control(text: "3", flags: "NUMBER|VISIBLE", position: (120, 100), size: (100, 20))]
+    amount_input: nwg::TextInput,
+
+    #[nwg_control(text: "1", flags: "NUMBER|VISIBLE", position: (120, 130), size: (100, 20))]
+    hours_input: nwg::TextInput,
+
+    #[nwg_control(text: "Please put your note here!", position: (120, 160), size: (133, 100))]
+    note_box: nwg::TextBox,
 
     #[nwg_control(text: "Save", position: (10, 250), size: (100, 25))]
     save_btn: nwg::Button,
@@ -110,9 +125,17 @@ impl Controls {
 
         self.layout.add_child((0, 0), (0, 0), &self.label1);
         self.layout.add_child((0, 0), (0, 0), &self.label2);
+        self.layout.add_child((0, 0), (0, 0), &self.label3);
+        self.layout.add_child((0, 0), (0, 0), &self.label4);
+        self.layout.add_child((0, 0), (0, 0), &self.label5);
+        self.layout.add_child((0, 0), (0, 0), &self.label6);
 
         self.layout.add_child((0, 0), (100, 0), &self.when_cbx);
-        self.layout.add_child((0, 0), (100, 0), &self.type_cpx);
+        self.layout.add_child((0, 0), (100, 0), &self.type_cbx);
+        self.layout.add_child((0, 0), (100, 0), &self.where_cbx);
+        self.layout.add_child((0, 0), (100, 0), &self.amount_input);
+        self.layout.add_child((0, 0), (100, 0), &self.hours_input);
+        self.layout.add_child((0, 0), (100, 0), &self.note_box);
 
         self.layout.add_child((0, 100), (0, 0), &self.save_btn);
     }
@@ -120,4 +143,8 @@ impl Controls {
 
 fn print_char(data: &nwg::EventData) {
     println!("{:?}", data.on_char());
+}
+
+fn print_selected(data: &nwg::EventData) {
+    println!("{:?}", data);
 }
