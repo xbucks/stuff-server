@@ -11,14 +11,17 @@ pub fn build_results() {
 
 #[derive(Default, NwgUi)]
 pub struct BasicApp {
-    #[nwg_control(size: (300, 115), position: (300, 300), title: "Basic example", flags: "WINDOW|VISIBLE")]
+    #[nwg_control(size: (300, 200), position: (300, 300), title: "Report", flags: "WINDOW|VISIBLE")]
     #[nwg_events( OnWindowClose: [BasicApp::say_goodbye] )]
     window: nwg::Window,
 
     #[nwg_control(text: "Heisenberg", size: (280, 25), position: (10, 10))]
     name_edit: nwg::TextInput,
 
-    #[nwg_control(text: "Say my name", size: (280, 60), position: (10, 40))]
+    #[nwg_control(collection: vec!["one", "two"], size: (280, 25), position: (10, 40))]
+    apply_where: nwg::ComboBox<&'static str>,
+
+    #[nwg_control(text: "Say my name", size: (280, 60), position: (10, 70))]
     #[nwg_events( OnButtonClick: [BasicApp::say_hello] )]
     hello_button: nwg::Button
 }
