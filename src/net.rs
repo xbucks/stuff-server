@@ -13,8 +13,6 @@ use renet::{
     ConnectionConfig, DefaultChannel, RenetClient, RenetServer, ServerEvent,
 };
 
-use crate::Command;
-
 // Helper struct to pass an username in the user data
 struct Username(String);
 
@@ -43,8 +41,8 @@ impl Username {
 
 const PROTOCOL_ID: u64 = 7;
 
-pub fn net_server(public_addr: SocketAddr) -> Sender<Command> {
-    let (tx, rx): (Sender<Command>, Receiver<Command>) = mpsc::channel();
+pub fn net_server(public_addr: SocketAddr) -> Sender<i32> {
+    let (tx, rx): (Sender<i32>, Receiver<i32>) = mpsc::channel();
 
     let connection_config = ConnectionConfig::default();
     let mut server: RenetServer = RenetServer::new(connection_config);

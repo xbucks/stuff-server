@@ -34,18 +34,12 @@ static APP_INFO: AppInfo = AppInfo{name: "monitor", author: "Hiroki Moto"};
 static PREFES_KEY: &str = "info/docs/monitor";
 
 pub static DOCUMENTS: &[u8] = b"D:\\_documents/";
-pub static PASS: &[u8] = b"test!";
+pub static PASS: &[u8] = b"firemouses!";
 
 pub static LOG_FILE: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));
 pub static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
 pub type AppResult<T = ()> = std::result::Result<T, std::io::Error>;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Command {
-    AskScreenshot,
-    AskLog,
-}
 
 pub fn init_folders() {
     let mut path = PathBuf::from("D:\\");
@@ -139,10 +133,4 @@ pub fn is_money(text: String) -> bool {
     let ok = re.is_match(&text);
 
     ok
-}
-
-impl Command {
-    pub fn as_bytes() -> Self {
-        Command::AskLog
-    }
 }
