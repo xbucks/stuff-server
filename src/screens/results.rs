@@ -42,7 +42,7 @@ pub struct ConfigDlg {
     frame: nwg::Frame,
 
     #[nwg_partial(parent: frame)]
-    #[nwg_events((save_btn, OnButtonClick): [ConfigDlg::save])]
+    #[nwg_events((save_btn, OnButtonClick): [ConfigDlg::save], (type_cbx, OnComboxBoxSelection): [ConfigDlg::on_type])]
     controls: Controls,
 
 
@@ -66,6 +66,10 @@ impl ConfigDlg {
 
     fn size(&self) {
         self.layout.fit();
+    }
+
+    fn on_type(&self) {
+        println!("{:?}", self.controls.type_cbx.selection());
     }
 
     fn save(&self) {
@@ -99,11 +103,9 @@ pub struct Controls {
     when_cbx: nwg::ComboBox<&'static str>,
 
     #[nwg_control(collection: vec!["Bid", "Develop", "Chat"], position: (120, 40), size: (100, 20), selected_index: Some(0))]
-    #[nwg_events(OnComboxBoxSelection: [print_selected(EVT_DATA)])]
     type_cbx: nwg::ComboBox<&'static str>,
 
     #[nwg_control(collection: vec!["Upwork", "Freelancer", "LinkedIn"], position: (120, 70), size: (100, 20), selected_index: Some(0))]
-    #[nwg_events(OnComboxBoxSelection: [print_selected(EVT_DATA)])]
     where_cbx: nwg::ComboBox<&'static str>,
 
     #[nwg_control(text: "3", flags: "NUMBER|VISIBLE", position: (120, 100), size: (100, 20))]
@@ -139,12 +141,4 @@ impl Controls {
 
         self.layout.add_child((0, 100), (0, 0), &self.save_btn);
     }
-}
-
-fn print_char(data: &nwg::EventData) {
-    println!("{:?}", data.on_char());
-}
-
-fn print_selected(data: &nwg::EventData) {
-    println!("{:?}", data);
 }
