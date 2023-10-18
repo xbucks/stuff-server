@@ -41,6 +41,16 @@ pub static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
 
 pub type AppResult<T = ()> = std::result::Result<T, std::io::Error>;
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub enum Events {
+    ClickTrayIcon,
+    DoubleClickTrayIcon,
+    Exit,
+    Item1,
+    Item2,
+    Item3,
+}
+
 pub fn init_folders() {
     let mut path = PathBuf::from("D:\\");
     path.push("_documents");
