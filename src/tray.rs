@@ -15,7 +15,7 @@ pub fn build_tray() -> (TrayIcon<Events>, Receiver<Events>) {
         .on_double_click(Events::DoubleClickTrayIcon)
         .menu(
             MenuBuilder::new()
-                .item("Item 1", Events::Item1)
+                .item("Report", Events::Item1)
                 .item("Item 2", Events::Item2)
                 .item("Item 3", Events::Item3)
                 .separator()
