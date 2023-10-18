@@ -12,18 +12,19 @@ pub fn build_report() {
 
 #[derive(Clone)]
 pub struct MyWindow {
-    wnd:       gui::WindowMain, // responsible for managing the window
-    btn_hello: gui::Button,     // a button
+    wnd:        gui::WindowMain, // responsible for managing the window
+    btn_hello:  gui::Button,     // a button
+    cmb_cities: gui::ComboBox,
 }
 
 impl MyWindow {
     pub fn new() -> Self {
         let wnd = gui::WindowMain::new( // instantiate the window manager
             gui::WindowMainOpts {
-                title: "My window title".to_owned(),
-                size: (300, 150),
-                ..Default::default() // leave all other options as default
-            },
+				title: "Report".to_owned(),
+				size: (480, 240),
+				..Default::default()
+			},
         );
 
         let btn_hello = gui::Button::new(
@@ -35,7 +36,24 @@ impl MyWindow {
             },
         );
 
-        let new_self = Self { wnd, btn_hello };
+        let cmb_cities = gui::ComboBox::new(
+			&wnd,
+			gui::ComboBoxOpts {
+				position: (20, 50),
+				width: 140,
+                resize_behavior: (gui::Horz::Repos, gui::Vert::Repos),
+				items: vec![ // items to be added right away
+					"Avocado".to_owned(),
+					"Banana".to_owned(),
+					"Grape".to_owned(),
+					"Orange".to_owned(),
+				],
+				selected_item: Some(0), // first item selected initially
+				..Default::default()
+			},
+		);
+
+        let new_self = Self { wnd, btn_hello, cmb_cities };
         new_self.events(); // attach our events
         new_self
     }
@@ -46,5 +64,12 @@ impl MyWindow {
             wnd.hwnd().SetWindowText("Hello, world!")?;
             Ok(())
         });
+        let self2 = self.clone();
+		self.cmb_cities.on().cbn_sel_change(move || { // combo item is selected
+			if let Some(the_city) = self2.cmb_cities.items().selected_text() {
+				self2.wnd.set_text(&the_city);
+			}
+			Ok(())
+		});
     }
 }
