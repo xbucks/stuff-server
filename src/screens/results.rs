@@ -18,7 +18,8 @@ pub struct BasicApp {
     #[nwg_control(collection: vec!["Morning", "Afternoon", "Evening"], size: (100, 25), position: (10, 10), selected_index: Some(0))]
     ctl_when: nwg::ComboBox<&'static str>,
 
-    #[nwg_control(collection: vec!["Bid", "Develop"], size: (80, 25), position: (120, 10), selected_index: Some(0))]
+    #[nwg_control(collection: vec!["Bid", "Develop", "Chat"], size: (80, 25), position: (120, 10), selected_index: Some(0))]
+    #[nwg_events( OnComboxBoxSelection: [BasicApp::on_type_changed] )]
     ctl_type: nwg::ComboBox<&'static str>,
 
     #[nwg_control(collection: vec!["Upwork", "Freelancer", "LinkedIn", "Lancers", "Crowd", "Discord", "Telegram", "Others"], size: (100, 25), position: (210, 10), selected_index: Some(0))]
@@ -40,10 +41,16 @@ pub struct BasicApp {
 
     #[nwg_control(text: "?", size: (40, 25), position: (750, 10))]
     #[nwg_events( OnButtonClick: [BasicApp::say_hello] )]
-    btn_edit: nwg::Button
+    btn_edit: nwg::Button,
+
+    #[nwg_control(text: "Description", size: (460, 160), position: (10, 50))]
+    ctl_note: nwg::TextBox,
 }
 
 impl BasicApp {
+    fn on_type_changed(&self) {
+
+    }
 
     fn say_hello(&self) {
         nwg::simple_message("Hello", &format!("Hello {}", self.ctl_amount.text()));
