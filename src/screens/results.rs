@@ -1,5 +1,7 @@
 use nwd::{NwgUi, NwgPartial};
 use nwg::NativeUi;
+use std::fs::File;
+use std::io::{Write, BufReader, BufRead, Error};
 
 pub fn build_results() {
     nwg::init().expect("Failed to init Native Windows GUI");
@@ -27,7 +29,7 @@ pub struct ConfigDlg {
     layout: nwg::DynLayout,
 
     #[nwg_control(position: (10, 30), size: (220, 330), collection: vec![])]
-    list: nwg::ListBox<&'static str>,
+    list: nwg::ListBox<String>,
 
     #[nwg_control(text: "Cancel", position: (10, 350), size: (100, 25))]
     cancel_btn: nwg::Button,
@@ -47,6 +49,8 @@ pub struct ConfigDlg {
 }
 
 impl ConfigDlg {
+    const DATA: Vec<String> = Vec::new();
+
     fn init(&self) {
         self.frame.set_visible(true);
 
@@ -87,10 +91,31 @@ impl ConfigDlg {
 
         let _amount = self.controls.amount_input.text();
         let _hours = self.controls.hours_input.text();
+        let _note = self.controls.note_box.text();
 
-        let text = format!("{}|{}|{}|{}|{}", _when, _type, _where, _amount, _hours);
+        let text: String = format!("{}|{}|{}|{}|{}|{}", _when, _type, _where, _amount, _hours, _note);
+        let display = format!("- {} | {} | {} | {} | {} hours | {}", _when, _type, _where, _amount, _hours, _note);
+        let _text = text.clone();
+        let _display = display.clone();
+        self::ConfigDlg::DATA.push(_text);
 
-        self.list.push(_when);
+        self.list.push(_display);
+    }
+
+    fn read_report() -> Result<(), Error> {
+        let path = "lines.txt";
+    
+        let mut output = File::create(path)?;
+        write!(output, "Rust\n💖\nFun")?;
+    
+        let input = File::open(path)?;
+        let buffered = BufReader::new(input);
+    
+        for line in buffered.lines() {
+            println!("{}", line?);
+        }
+    
+        Ok(())
     }
 
     fn exit(&self) {
