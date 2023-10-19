@@ -21,26 +21,26 @@ pub fn build_results() {
 
 #[derive(Default, NwgUi)]
 pub struct ConfigDlg {
-    #[nwg_control(size: (500, 400), position: (300, 300), title: "Report")]
+    #[nwg_control(size: (900, 600), position: (100, 100), title: "Report")]
     #[nwg_events(OnInit: [ConfigDlg::init], OnResize: [ConfigDlg::size], OnWindowClose: [ConfigDlg::exit])]
     window: nwg::Window,
 
     #[nwg_layout(parent: window)]
     layout: nwg::DynLayout,
 
-    #[nwg_control(position: (10, 30), size: (220, 330), collection: vec![])]
+    #[nwg_control(position: (20, 30), size: (600, 530), collection: vec![])]
     list: nwg::ListBox<String>,
 
-    #[nwg_control(text: "Cancel", position: (10, 350), size: (100, 25))]
+    #[nwg_control(text: "Cancel", position: (20, 550), size: (100, 25))]
     cancel_btn: nwg::Button,
 
-    #[nwg_control(text: "Ok", position: (120, 350), size: (100, 25))]
+    #[nwg_control(text: "Ok", position: (130, 550), size: (100, 25))]
     ok_btn: nwg::Button,
 
-    #[nwg_control(text: "Config", position: (380, 350), size: (100, 25))]
+    #[nwg_control(text: "Config", position: (680, 550), size: (100, 25))]
     config_btn: nwg::Button,
 
-    #[nwg_control(position: (240, 30), size: (240, 300))]
+    #[nwg_control(position: (640, 30), size: (240, 510))]
     frame: nwg::Frame,
 
     #[nwg_partial(parent: frame)]
