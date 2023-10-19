@@ -26,7 +26,7 @@ pub struct ConfigDlg {
     #[nwg_layout(parent: window)]
     layout: nwg::DynLayout,
 
-    #[nwg_control(position: (10, 30), size: (220, 330), collection: vec!["People"])]
+    #[nwg_control(position: (10, 30), size: (220, 330), collection: vec![])]
     list: nwg::ListBox<&'static str>,
 
     #[nwg_control(text: "Cancel", position: (10, 350), size: (100, 25))]
@@ -44,8 +44,6 @@ pub struct ConfigDlg {
     #[nwg_partial(parent: frame)]
     #[nwg_events((save_btn, OnButtonClick): [ConfigDlg::save], (type_cbx, OnComboxBoxSelection): [ConfigDlg::on_type])]
     controls: Controls,
-
-
 }
 
 impl ConfigDlg {
@@ -69,11 +67,30 @@ impl ConfigDlg {
     }
 
     fn on_type(&self) {
-        println!("{:?}", self.controls.type_cbx.selection());
+        let mut items = self.controls.type_cbx.collection_mut();
+        let index = self.controls.type_cbx.selection().unwrap_or(0);
+        println!("{:?}", items.get(index).unwrap());
     }
 
     fn save(&self) {
-        nwg::simple_message("Saved!", "Data saved!");
+        let items_when = self.controls.when_cbx.collection_mut();
+        let index_when = self.controls.when_cbx.selection().unwrap_or(0);
+        let _when = items_when.get(index_when).unwrap();
+
+        let items_type = self.controls.type_cbx.collection_mut();
+        let index_type = self.controls.type_cbx.selection().unwrap_or(0);
+        let _type = items_type.get(index_type).unwrap();
+
+        let items_where = self.controls.where_cbx.collection_mut();
+        let index_where = self.controls.where_cbx.selection().unwrap_or(0);
+        let _where = items_where.get(index_where).unwrap();
+
+        let _amount = self.controls.amount_input.text();
+        let _hours = self.controls.hours_input.text();
+
+        let text = format!("{}|{}|{}|{}|{}", _when, _type, _where, _amount, _hours);
+
+        self.list.push(_when);
     }
 
     fn exit(&self) {
