@@ -67,6 +67,8 @@ impl ConfigDlg {
         self.controls.init(&self.frame);
 
         self.layout.fit();
+
+        Self::read_report(&self);
     }
 
     fn size(&self) {
@@ -102,20 +104,21 @@ impl ConfigDlg {
         let _display = display.clone();
 
         self.list.push(_display);
-        *REPORT.lock().unwrap() = self.list.collection().to_vec();
+        REPORT.lock().unwrap().push(_text);
     }
 
-    fn read_report() -> Result<(), Error> {
-        let path = "lines.txt";
-    
-        let mut output = File::create(path)?;
-        write!(output, "Rust\n💖\nFun")?;
+    fn read_report(&self) -> Result<(), Error> {
+        let path = "report.txt";
     
         let input = File::open(path)?;
         let buffered = BufReader::new(input);
     
         for line in buffered.lines() {
-            println!("{}", line?);
+            let _line = line.unwrap().clone();
+            let parts: Vec<&str> = _line.split("|").collect();
+            let display = format!("- {} | {} | {} | {} | {} hours | {}", parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]);
+            self.list.push(display);
+            REPORT.lock().unwrap().push(_line);
         }
     
         Ok(())
