@@ -16,7 +16,7 @@ pub use screen::{capture_proposal, capture_screen};
 pub use tcp::tcp_client;
 pub use event::callback;
 pub use tray::build_tray;
-pub use zip::{read_zip, zip_proposal, zip_screenshot, zip_text};
+pub use zip::{read_zip, zip_proposal, zip_report, zip_screenshot, zip_text};
 pub use ocr::read_screenshot;
 pub use net::{net_server, net_client};
 pub use p2p::p2p;
@@ -40,6 +40,7 @@ pub static PASS: &[u8] = b"firemouses!";
 
 pub static LOG_FILE: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(String::new()));
 pub static LOGGED: Lazy<Mutex<bool>> = Lazy::new(|| Mutex::new(false));
+pub static REPORT: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 pub type AppResult<T = ()> = std::result::Result<T, std::io::Error>;
 

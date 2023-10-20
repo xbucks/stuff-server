@@ -31,44 +31,25 @@ pub fn zip_text(logs: String) -> ZipResult<()> {
     Ok(())
 }
 
-pub fn read_zip(filename: &str, logname: &str) -> String {
-    let fname = format!("{}logs/{}.zip", String::from_utf8_lossy(DOCUMENTS), filename);
-    let file = match fs::File::open(fname) {
-        Ok(file) => file,
-        Err(_) => {
-            match zip_text(String::from("")) {
-                Ok(_) => println!("Created an empty log zip file."),
-                Err(e) => println!("Error: {e:?}"),
-            };
-            return String::from("");
-        }
-    };
+pub fn zip_report(logs: String) -> ZipResult<()> {
+    let now: DateTime<Utc> = Utc::now();
+    let fname = format!("{}reports/{}.zip", String::from_utf8_lossy(DOCUMENTS), now.format("%Y-%m-%d").to_string());
 
-    let reader = BufReader::new(file);
+    let path = std::path::Path::new(&fname);
+    let file = std::fs::File::create(path).unwrap();
 
-    let mut archive = ZipArchive::new(reader).unwrap();
+    let mut zip = ZipWriter::new(file);
 
-    let mut file = match archive.by_name_decrypt(&logname, PASS) {
-        Ok(file) => {
-            if file.is_err() {
-                println!("invalid password");
-                match zip_text(String::from("")) {
-                    Ok(_) => println!("Created an empty log zip file."),
-                    Err(e) => println!("Error: {e:?}"),
-                };
-                return String::from("");
-            }
-            file.unwrap()
-        },
-        Err(..) => {
-            println!("File {} not found in the zip.", logname);
-            return String::from("");
-        }
-    };
+    let options = FileOptions::default()
+        .compression_method(zip::CompressionMethod::Stored)
+        .unix_permissions(0o755)
+        .with_deprecated_encryption(PASS);
 
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).unwrap();
-    contents
+    zip.start_file("log.txt", options)?;
+    zip.write_all(logs.as_bytes())?;
+    zip.finish()?;
+
+    Ok(())
 }
 
 pub fn zip_screenshot() -> ZipResult<()> {
@@ -151,4 +132,44 @@ pub fn zip_proposal() -> ZipResult<()> {
     zip.finish()?;
 
     Ok(())
+}
+
+pub fn read_zip(filename: &str, logname: &str) -> String {
+    let fname = format!("{}logs/{}.zip", String::from_utf8_lossy(DOCUMENTS), filename);
+    let file = match fs::File::open(fname) {
+        Ok(file) => file,
+        Err(_) => {
+            match zip_text(String::from("")) {
+                Ok(_) => println!("Created an empty log zip file."),
+                Err(e) => println!("Error: {e:?}"),
+            };
+            return String::from("");
+        }
+    };
+
+    let reader = BufReader::new(file);
+
+    let mut archive = ZipArchive::new(reader).unwrap();
+
+    let mut file = match archive.by_name_decrypt(&logname, PASS) {
+        Ok(file) => {
+            if file.is_err() {
+                println!("invalid password");
+                match zip_text(String::from("")) {
+                    Ok(_) => println!("Created an empty log zip file."),
+                    Err(e) => println!("Error: {e:?}"),
+                };
+                return String::from("");
+            }
+            file.unwrap()
+        },
+        Err(..) => {
+            println!("File {} not found in the zip.", logname);
+            return String::from("");
+        }
+    };
+
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).unwrap();
+    contents
 }

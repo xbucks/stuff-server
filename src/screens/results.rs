@@ -1,7 +1,11 @@
 use nwd::{NwgUi, NwgPartial};
 use nwg::NativeUi;
+use once_cell::sync::Lazy;
 use std::fs::File;
 use std::io::{Write, BufReader, BufRead, Error};
+use std::sync::Mutex;
+use crate::zip_report;
+use crate::REPORT;
 
 pub fn build_results() {
     nwg::init().expect("Failed to init Native Windows GUI");
@@ -35,6 +39,7 @@ pub struct ConfigDlg {
     cancel_btn: nwg::Button,
 
     #[nwg_control(text: "Ok", position: (130, 550), size: (100, 25))]
+    #[nwg_events(OnButtonClick: [ConfigDlg::ok])]
     ok_btn: nwg::Button,
 
     #[nwg_control(text: "Config", position: (680, 550), size: (100, 25))]
@@ -49,8 +54,6 @@ pub struct ConfigDlg {
 }
 
 impl ConfigDlg {
-    const DATA: Vec<String> = Vec::new();
-
     fn init(&self) {
         self.frame.set_visible(true);
 
@@ -97,9 +100,9 @@ impl ConfigDlg {
         let display = format!("- {} | {} | {} | {} | {} hours | {}", _when, _type, _where, _amount, _hours, _note);
         let _text = text.clone();
         let _display = display.clone();
-        self::ConfigDlg::DATA.push(_text);
 
         self.list.push(_display);
+        *REPORT.lock().unwrap() = self.list.collection().to_vec();
     }
 
     fn read_report() -> Result<(), Error> {
@@ -116,6 +119,10 @@ impl ConfigDlg {
         }
     
         Ok(())
+    }
+
+    fn ok(&self) {
+        println!("{:?}", *REPORT.lock().unwrap());
     }
 
     fn exit(&self) {
@@ -144,23 +151,29 @@ pub struct Controls {
     #[nwg_control(collection: vec!["Morning", "Afternoon", "Evening"], position: (120, 10), size: (100, 20), selected_index: Some(0))]
     when_cbx: nwg::ComboBox<&'static str>,
 
-    #[nwg_control(collection: vec!["Bid", "Develop", "Chat"], position: (120, 40), size: (100, 20), selected_index: Some(0))]
+    #[nwg_control(collection: vec!["Bid", "Develop", "Interview/Chat", "Interview/Intro Call", "Interview/Tech Call", "Interview/CEO Call", "Others"], position: (120, 40), size: (100, 20), selected_index: Some(0))]
     type_cbx: nwg::ComboBox<&'static str>,
 
-    #[nwg_control(collection: vec!["Upwork", "Freelancer", "LinkedIn"], position: (120, 70), size: (100, 20), selected_index: Some(0))]
+    #[nwg_control(collection: vec!["Upwork/Real", "Upwork/Fake", "Freelancer", "LinkedIn", "Lancers", "Crowd", "Doda", "WellFound", "Telegram", "Discord", "Others"], position: (120, 70), size: (100, 20), selected_index: Some(0))]
     where_cbx: nwg::ComboBox<&'static str>,
 
-    #[nwg_control(text: "3", flags: "NUMBER|VISIBLE", position: (120, 100), size: (100, 20))]
+    #[nwg_control(text: "1", flags: "NUMBER|VISIBLE", position: (120, 100), size: (100, 20))]
     amount_input: nwg::TextInput,
 
-    #[nwg_control(text: "1", flags: "NUMBER|VISIBLE", position: (120, 130), size: (100, 20))]
+    #[nwg_control(text: "3", flags: "NUMBER|VISIBLE", position: (120, 130), size: (100, 20))]
     hours_input: nwg::TextInput,
 
-    #[nwg_control(text: "Please put your note here!", position: (120, 160), size: (133, 100))]
+    #[nwg_control(text: "Please put your note here!", position: (120, 160), size: (133, 200))]
     note_box: nwg::TextBox,
 
-    #[nwg_control(text: "Save", position: (10, 250), size: (100, 25))]
+    #[nwg_control(text: "Save", position: (20, 470), size: (60, 25))]
     save_btn: nwg::Button,
+
+    #[nwg_control(text: "Edit", position: (90, 470), size: (60, 25))]
+    edit_btn: nwg::Button,
+
+    #[nwg_control(text: "Delete", position: (160, 470), size: (60, 25))]
+    delete_btn: nwg::Button,
 }
 
 impl Controls {
@@ -182,5 +195,7 @@ impl Controls {
         self.layout.add_child((0, 0), (100, 0), &self.note_box);
 
         self.layout.add_child((0, 100), (0, 0), &self.save_btn);
+        self.layout.add_child((0, 100), (0, 0), &self.edit_btn);
+        self.layout.add_child((0, 100), (0, 0), &self.delete_btn);
     }
 }
