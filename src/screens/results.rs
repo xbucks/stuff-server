@@ -1,9 +1,9 @@
 use nwd::{NwgUi, NwgPartial};
 use nwg::NativeUi;
-use once_cell::sync::Lazy;
-use std::fs::File;
+use std::fs::{self, File};
+use std::io::prelude::*;
+use std::io::LineWriter;
 use std::io::{Write, BufReader, BufRead, Error};
-use std::sync::Mutex;
 use crate::zip_report;
 use crate::REPORT;
 
@@ -121,8 +121,23 @@ impl ConfigDlg {
         Ok(())
     }
 
+    fn write_report() -> Result<(), Error> {
+        let file = File::create("report.txt")?;
+        let mut file = LineWriter::new(file);
+
+        for name in REPORT.lock().unwrap().iter() {
+            file.write_all(name.as_bytes());
+            file.write_all(b"\n")?;
+        }
+
+        file.flush()?;
+
+        Ok(())
+    }
+
     fn ok(&self) {
         println!("{:?}", *REPORT.lock().unwrap());
+        Self::write_report();
     }
 
     fn exit(&self) {
