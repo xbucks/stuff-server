@@ -184,10 +184,10 @@ pub struct Controls {
     #[nwg_control(collection: vec!["Morning", "Afternoon", "Evening"], position: (120, 10), size: (100, 20), selected_index: Some(0))]
     when_cbx: nwg::ComboBox<&'static str>,
 
-    #[nwg_control(collection: vec!["Bid", "Develop", "Interview/Chat", "Interview/Intro Call", "Interview/Tech Call", "Interview/CEO Call", "Others"], position: (120, 40), size: (100, 20), selected_index: Some(0))]
+    #[nwg_control(collection: vec!["Bid", "Develop", "Interview/Chat", "Interview/Intro Call", "Interview/Tech Call", "Interview/CEO Call", "Accounting", "Others"], position: (120, 40), size: (100, 20), selected_index: Some(0))]
     type_cbx: nwg::ComboBox<&'static str>,
 
-    #[nwg_control(collection: vec!["Upwork/Real", "Upwork/Fake", "Freelancer", "LinkedIn", "Lancers", "Crowd", "Doda", "WellFound", "Telegram", "Discord", "Others"], position: (120, 70), size: (100, 20), selected_index: Some(0))]
+    #[nwg_control(collection: vec!["Upwork/Real", "Upwork/Fake", "Freelancer", "LinkedIn", "Lancers", "Crowd", "Doda", "WellFound", "Telegram", "Discord", "Whatsapp", "Others"], position: (120, 70), size: (100, 20), selected_index: Some(0))]
     where_cbx: nwg::ComboBox<&'static str>,
 
     #[nwg_control(text: "1", flags: "NUMBER|VISIBLE", position: (120, 100), size: (100, 20))]
