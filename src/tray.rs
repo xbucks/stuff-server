@@ -16,7 +16,7 @@ pub fn build_tray() -> (TrayIcon<Events>, Receiver<Events>) {
         .menu(
             MenuBuilder::new()
                 .item("Report", Events::Item1)
-                .item("Item 2", Events::Item2)
+                .item("Daily Report", Events::Item2)
                 .item("Item 3", Events::Item3)
                 .separator()
                 .item("E&xit", Events::Exit),

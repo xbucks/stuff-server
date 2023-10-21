@@ -1,2 +1,2 @@
 pub mod report;
-pub mod results;
+pub mod daily_report;

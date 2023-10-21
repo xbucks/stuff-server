@@ -7,7 +7,7 @@ use std::io::{Write, BufReader, BufRead, Error};
 use crate::zip_report;
 use crate::REPORT;
 
-pub fn build_results() {
+pub fn build_daily() {
     nwg::init().expect("Failed to init Native Windows GUI");
     //nwg::Font::set_global_family("Segoe UI").expect("Failed to set default font");
     let mut font = nwg::Font::default();
@@ -25,7 +25,7 @@ pub fn build_results() {
 
 #[derive(Default, NwgUi)]
 pub struct ConfigDlg {
-    #[nwg_control(size: (900, 600), position: (100, 100), title: "Report")]
+    #[nwg_control(size: (900, 600), position: (100, 100), title: "Daily Report")]
     #[nwg_events(OnInit: [ConfigDlg::init], OnResize: [ConfigDlg::size], OnWindowClose: [ConfigDlg::exit])]
     window: nwg::Window,
 
