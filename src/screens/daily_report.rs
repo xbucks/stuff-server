@@ -35,15 +35,17 @@ pub struct ConfigDlg {
     #[nwg_control(position: (20, 30), size: (600, 530), collection: vec![])]
     list: nwg::ListBox<String>,
 
-    #[nwg_control(text: "Cancel", position: (20, 550), size: (100, 25))]
+    #[nwg_control(text: "Cancel", position: (560, 550), size: (100, 25))]
+    #[nwg_events(OnButtonClick: [ConfigDlg::cancel])]
     cancel_btn: nwg::Button,
 
-    #[nwg_control(text: "Ok", position: (130, 550), size: (100, 25))]
+    #[nwg_control(text: "Ok", position: (670, 550), size: (100, 25))]
     #[nwg_events(OnButtonClick: [ConfigDlg::ok])]
     ok_btn: nwg::Button,
 
-    #[nwg_control(text: "Config", position: (680, 550), size: (100, 25))]
-    config_btn: nwg::Button,
+    #[nwg_control(text: "Submit", position: (780, 550), size: (100, 25))]
+    #[nwg_events(OnButtonClick: [ConfigDlg::submit])]
+    submit_btn: nwg::Button,
 
     #[nwg_control(position: (640, 30), size: (240, 510))]
     frame: nwg::Frame,
@@ -58,9 +60,9 @@ impl ConfigDlg {
         self.frame.set_visible(true);
 
         self.layout.add_child((0, 0), (50, 100), &self.list);
-        self.layout.add_child((0, 100), (0, 0), &self.ok_btn);
-        self.layout.add_child((0, 100), (0, 0), &self.cancel_btn);
-        self.layout.add_child((100, 100), (0, 0), &self.config_btn);
+        self.layout.add_child((100, 100), (0, 0), &self.ok_btn);
+        self.layout.add_child((100, 100), (0, 0), &self.cancel_btn);
+        self.layout.add_child((100, 100), (0, 0), &self.submit_btn);
 
         self.layout.add_child((50, 0), (50, 100), &self.frame);
 
@@ -139,8 +141,21 @@ impl ConfigDlg {
     }
 
     fn ok(&self) {
-        println!("{:?}", *REPORT.lock().unwrap());
-        Self::write_report();
+        match Self::write_report() {
+            Ok(..) => (),
+            Err(..) => println!("failed to save daily report.")
+        };
+    }
+
+    fn cancel(&self) {
+        nwg::stop_thread_dispatch();
+    }
+
+    fn submit(&self) {
+        match Self::write_report() {
+            Ok(..) => (),
+            Err(..) => println!("failed to submit daily report.")
+        };
     }
 
     fn exit(&self) {
