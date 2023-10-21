@@ -9,7 +9,7 @@ use libp2p::{
 use std::collections::hash_map::DefaultHasher;
 use std::error::Error;
 use std::hash::{Hash, Hasher};
-use std::sync::mpsc::{self, Sender, Receiver};
+use tokio::sync::mpsc::{self, Receiver};
 use std::time::Duration;
 use tokio::{io, io::AsyncBufReadExt, select};
 
@@ -21,7 +21,7 @@ struct MyBehaviour {
 }
 
 #[tokio::main]
-pub async fn p2p_chat(r: Receiver<String>) -> Result<(), Box<dyn Error>> {
+pub async fn p2p_chat(mut rx: Receiver<String>) -> Result<(), Box<dyn Error>> {
     // Create a random PeerId
     env_logger::init();
     let id_keys = identity::Keypair::generate_ed25519();
@@ -86,7 +86,7 @@ pub async fn p2p_chat(r: Receiver<String>) -> Result<(), Box<dyn Error>> {
     
     std::thread::spawn(move || {
         loop {
-            println!("{}", r.recv().unwrap());
+            // println!("{}", r.recv().unwrap());
         }
     });
 
@@ -99,6 +99,9 @@ pub async fn p2p_chat(r: Receiver<String>) -> Result<(), Box<dyn Error>> {
                     .publish(topic.clone(), line.as_bytes()) {
                     println!("Publish error: {e:?}");
                 }
+            }
+            Some(msg) = rx.recv() => {
+                println!("{}", msg);
             }
             event = swarm.select_next_some() => match event {
                 SwarmEvent::Behaviour(MyBehaviourEvent::Mdns(mdns::Event::Discovered(list))) => {
