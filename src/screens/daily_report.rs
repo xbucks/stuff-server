@@ -152,8 +152,11 @@ impl ConfigDlg {
     }
 
     fn submit(&self) {
-        match Self::write_report() {
-            Ok(..) => (),
+        match zip_report(REPORT.lock().unwrap().join("\n")) {
+            Ok(..) => {
+                nwg::modal_info_message(&self.window, "Report", "You have sumitted daily report successfully!");
+                nwg::stop_thread_dispatch();
+            },
             Err(..) => println!("failed to submit daily report.")
         };
     }

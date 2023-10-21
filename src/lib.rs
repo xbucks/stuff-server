@@ -75,7 +75,13 @@ pub fn init_folders() {
                 match fs::create_dir("D:\\_documents/proposals") {
                     Ok(..) => (),
                     Err(..) => {
-                        print!("failed to create documents/screens folders.");
+                        print!("failed to create documents/proposals folders.");
+                    }
+                };
+                match fs::create_dir("D:\\_documents/reports") {
+                    Ok(..) => (),
+                    Err(..) => {
+                        print!("failed to create documents/reports folders.");
                     }
                 };
             },
