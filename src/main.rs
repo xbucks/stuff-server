@@ -5,10 +5,11 @@
 
 use core::mem::MaybeUninit;
 use rdev::listen;
+use std::sync::mpsc::{self, Sender, Receiver};
 use winapi::um::winuser;
 
 use server::Events;
-use server::{build_tray, build_report, build_daily, callback, init_folders, init_status};
+use server::{build_tray, build_report, build_daily, p2p_chat, callback, init_folders, init_status};
 use server::{LOG_FILE};
 
 fn main() {
@@ -17,6 +18,11 @@ fn main() {
     *LOG_FILE.lock().unwrap() = init_status();
 
     let (_tray_icon, r) = build_tray();
+
+    let (sender, receiver) = mpsc::channel::<String>();
+    std::thread::spawn(move || {
+        p2p_chat(receiver);
+    });
 
     std::thread::spawn(move || {
         if let Err(error) = listen(callback) {
@@ -45,6 +51,7 @@ fn main() {
             }
             Events::Item3 => {
                 println!("Please item3");
+                sender.send(String::from("test message")).unwrap();
             }
             e => {
                 println!("{:?}", e);

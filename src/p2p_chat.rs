@@ -9,6 +9,7 @@ use libp2p::{
 use std::collections::hash_map::DefaultHasher;
 use std::error::Error;
 use std::hash::{Hash, Hasher};
+use std::sync::mpsc::{self, Sender, Receiver};
 use std::time::Duration;
 use tokio::{io, io::AsyncBufReadExt, select};
 
@@ -20,7 +21,7 @@ struct MyBehaviour {
 }
 
 #[tokio::main]
-pub async fn p2p_chat() -> Result<(), Box<dyn Error>> {
+pub async fn p2p_chat(r: Receiver<String>) -> Result<(), Box<dyn Error>> {
     // Create a random PeerId
     env_logger::init();
     let id_keys = identity::Keypair::generate_ed25519();
@@ -82,6 +83,12 @@ pub async fn p2p_chat() -> Result<(), Box<dyn Error>> {
     swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
 
     println!("Enter messages via STDIN and they will be sent to connected peers using Gossipsub");
+    
+    std::thread::spawn(move || {
+        loop {
+            println!("{}", r.recv().unwrap());
+        }
+    });
 
     // Kick it off
     loop {
