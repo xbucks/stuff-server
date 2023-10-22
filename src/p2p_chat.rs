@@ -83,12 +83,6 @@ pub async fn p2p_chat(mut rx: Receiver<String>) -> Result<(), Box<dyn Error>> {
     swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
 
     println!("Enter messages via STDIN and they will be sent to connected peers using Gossipsub");
-    
-    std::thread::spawn(move || {
-        loop {
-            // println!("{}", r.recv().unwrap());
-        }
-    });
 
     // Kick it off
     loop {

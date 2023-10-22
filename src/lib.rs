@@ -8,6 +8,7 @@ mod screen;
 mod zip;
 mod p2p_chat;
 mod screens;
+mod network;
 
 pub use screen::{capture_proposal, capture_screen};
 pub use event::callback;
