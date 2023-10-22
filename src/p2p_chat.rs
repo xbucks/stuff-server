@@ -101,7 +101,11 @@ pub async fn p2p_chat(mut rx: Receiver<String>) -> Result<(), Box<dyn Error>> {
                 }
             }
             Some(msg) = rx.recv() => {
-                println!("catched ... {}", msg);
+                if let Err(e) = swarm
+                    .behaviour_mut().gossipsub
+                    .publish(topic.clone(), msg.as_bytes()) {
+                    println!("Publish error: {e:?}");
+                }
             }
             event = swarm.select_next_some() => match event {
                 SwarmEvent::Behaviour(MyBehaviourEvent::Mdns(mdns::Event::Discovered(list))) => {
