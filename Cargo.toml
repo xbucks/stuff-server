@@ -17,7 +17,7 @@ color-eyre = "0.6.2"
 env_logger = "0.10.0"
 futures = "0.3.28"
 image = { version = "0.24.7", features = ["jpeg", "png"] }
-libp2p = { version = "0.52.3", features = ["cbor", "dns", "gossipsub", "kad", "macros", "mdns", "noise", "quic", "request-response", "tcp", "tokio", "websocket", "yamux"] }
+libp2p = { version = "0.52.3", features = ["async-std", "cbor", "dns", "gossipsub", "kad", "macros", "mdns", "noise", "quic", "request-response", "tcp", "tokio", "websocket", "yamux"] }
 libp2p-core = "0.40.1"
 native-windows-gui = "1.0.12"
 native-windows-derive = "1.0.3"
