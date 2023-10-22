@@ -101,7 +101,7 @@ pub async fn p2p_chat(mut rx: Receiver<String>) -> Result<(), Box<dyn Error>> {
                 }
             }
             Some(msg) = rx.recv() => {
-                println!("{}", msg);
+                println!("catched ... {}", msg);
             }
             event = swarm.select_next_some() => match event {
                 SwarmEvent::Behaviour(MyBehaviourEvent::Mdns(mdns::Event::Discovered(list))) => {

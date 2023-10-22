@@ -32,35 +32,16 @@ async  fn main() {
     });
 
     tokio::spawn(async move {
-        tx.send(String::from("test message")).await;
-    });
-
-    std::thread::spawn(move || {
-        r.iter().for_each(|m| match m {
-            Events::DoubleClickTrayIcon => {
-                println!("Double click");
-            }
-            Events::ClickTrayIcon => {
-                println!("Single click");
-            }
-            Events::Exit => {
-                println!("Please exit");
-            }
-            Events::Item1 => {
-                println!("Please item1");
+        loop {
+            let msg = r.recv().unwrap();
+            if msg == Events::Item1 {
                 build_report();
-            }
-            Events::Item2 => {
-                println!("Please item2");
+            } else if msg == Events::Item2 {
                 build_daily();
+            } else if msg == Events::Item3 {
+                tx.send(String::from("test message")).await;
             }
-            Events::Item3 => {
-                println!("Please item3");
-            }
-            e => {
-                println!("{:?}", e);
-            }
-        })
+        }
     });
 
     loop {
